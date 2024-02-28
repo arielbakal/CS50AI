@@ -106,19 +106,15 @@ class Sentence():
         """
         Returns the set of all cells in self.cells known to be mines.
         """
-        res = set()
-        if len(self.cells) == self.count:
-            res = self.cells
-        return res
+        if self.count == len(self.cells):
+            return self.cells
 
     def known_safes(self):
         """
         Returns the set of all cells in self.cells known to be safe.
         """
-        res = set()
-        if len(self.cells) == 0:
-            res = self.cells
-        return res
+        if self.count == 0:
+            return self.cells
 
     def mark_mine(self, cell):
         """
@@ -131,7 +127,6 @@ class Sentence():
         else:
             pass
 
-
     def mark_safe(self, cell):
         """
         Updates internal knowledge representation given the fact that
@@ -139,9 +134,8 @@ class Sentence():
         """
         if cell in self.cells:
             self.cells.remove(cell)
-        else: 
+        else:
             pass
-
 
 class MinesweeperAI():
     """
@@ -207,18 +201,9 @@ class MinesweeperAI():
 
         if len(sentence.cells) > 0:
             self.knowledge.append(sentence)
-            print(f"Adding new sentence: {sentence}")
-
-        print("Printing knowledge:")
-        for sent in self.knowledge:
-            print(sent)
-
 
         # 4) mark any additional cells as safe or as mines if it can be concluded based on the AI's knowledge base
         self.check_knowledge()
-        print(f"Safe cells: {self.safes - self.moves_made}")
-        print(f"Mine cells: {self.mines}")
-        print("------------")
 
         # 5) add any new sentences to the AI's knowledge base if they can be inferred from existing knowledge
         self.extra_inference()
@@ -245,13 +230,11 @@ class MinesweeperAI():
             # update knowledge if mine or safe was found
             if mines:
                 for mine in mines:
-                    print(f"Marking {mine} as mine")
                     self.mark_mine(mine)
                     self.check_knowledge()
 
             if safes:
                 for safe in safes:
-                    print(f"Marking {safe} as safe")
                     self.mark_safe(safe)
                     self.check_knowledge()
 
@@ -269,14 +252,10 @@ class MinesweeperAI():
                     safes = new_sentence.known_safes()
                     if mines:
                         for mine in mines:
-                            print(f"Used inference to mark mine: {mine}")
-                            print(f"FinalSen: {new_sentence}")
                             self.mark_mine(mine)
 
                     if safes:
                         for safe in safes:
-                            print(f"Used inference to mark safe: {safe}")
-                            print(f"FinalSen: {new_sentence}")
                             self.mark_safe(safe)
 
 
@@ -290,8 +269,6 @@ class MinesweeperAI():
         and self.moves_made, but should not modify any of those values.
         """
         for i in self.safes - self.moves_made:
-            # choose first safe cell that wasn't picked before
-            print(f"Making {i} move")
             return i
         
         return None
