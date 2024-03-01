@@ -1,2 +1,4 @@
-# Introduction to Artificial Intelligence with Python HarvardX Course
+# CS50AI
+
+
 
