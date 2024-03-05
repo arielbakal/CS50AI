@@ -11,14 +11,17 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
-    ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
-    print(f"PageRank Results from Sampling (n = {SAMPLES})")
-    for page in sorted(ranks):
-        print(f"  {page}: {ranks[page]:.4f}")
-    ranks = iterate_pagerank(corpus, DAMPING)
-    print(f"PageRank Results from Iteration")
-    for page in sorted(ranks):
-        print(f"  {page}: {ranks[page]:.4f}")
+
+    print(transition_model(corpus, "1.html", DAMPING))
+
+    # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
+    # print(f"PageRank Results from Sampling (n = {SAMPLES})")
+    # for page in sorted(ranks):
+    #     print(f"  {page}: {ranks[page]:.4f}")
+    # ranks = iterate_pagerank(corpus, DAMPING)
+    # print(f"PageRank Results from Iteration")
+    # for page in sorted(ranks):
+    #     print(f"  {page}: {ranks[page]:.4f}")
 
 
 def crawl(directory):
@@ -57,7 +60,16 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    res = {} # inicializo mi var de return
+    print(corpus)
+    for k, v in corpus.items(): # itero sobre el corpus
+        prob = 0 # inicializo mi prob que va a ser el value para cada pagina key de return
+        if k != page: # descarto la prob de ir a la misma pagina donde estoy (0)
+            # tengo "d" prob de ir a cualquiera de todos las paginas linkeada, sumado a "1 - d" prob
+            # de ir a una pagina cualquiera 
+            prob = ((1 / len(v)) * damping_factor) + ((1/len(corpus)) * (1 - damping_factor))
+            res[k] = prob
+    return res
 
 
 def sample_pagerank(corpus, damping_factor, n):
