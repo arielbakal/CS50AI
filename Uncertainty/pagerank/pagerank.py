@@ -60,15 +60,26 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    res = {} # inicializo mi var de return
-    print(corpus)
-    for k, v in corpus.items(): # itero sobre el corpus
-        prob = 0 # inicializo mi prob que va a ser el value para cada pagina key de return
-        if k != page: # descarto la prob de ir a la misma pagina donde estoy (0)
-            # tengo "d" prob de ir a cualquiera de todos las paginas linkeada, sumado a "1 - d" prob
-            # de ir a una pagina cualquiera 
-            prob = ((1 / len(v)) * damping_factor) + ((1/len(corpus)) * (1 - damping_factor))
-            res[k] = prob
+    res = {}
+
+    # Calculate the probability for choosing a random page
+    random_prob = (1 / len(corpus)) * (1 - damping_factor)
+
+    # Assign the probability for the current page
+    res[page] = random_prob
+
+    # Calculate the probability for choosing a linked page
+    linked_prob = (1 / len(corpus[page])) * damping_factor
+
+    # Assign the probability for each linked page
+    for linked_page in corpus[page]:
+        res[linked_page] = linked_prob
+
+    # Assign the probability for all other pages
+    for other_page in corpus:
+        if other_page not in corpus[page]:
+            res[other_page] = random_prob
+
     return res
 
 
