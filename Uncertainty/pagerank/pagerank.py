@@ -12,7 +12,7 @@ def main():
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
 
-    print(transition_model(corpus, "1.html", DAMPING))
+    transition_model(corpus, "1.html", DAMPING)
 
     # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     # print(f"PageRank Results from Sampling (n = {SAMPLES})")
@@ -60,6 +60,7 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
+    print("CORPUS: ",corpus)
     res = {}
 
     # Calculate the probability for choosing a random page
@@ -73,12 +74,19 @@ def transition_model(corpus, page, damping_factor):
 
     # Assign the probability for each linked page
     for linked_page in corpus[page]:
-        res[linked_page] = linked_prob
+        res[linked_page] = linked_prob + random_prob
 
     # Assign the probability for all other pages
     for other_page in corpus:
         if other_page not in corpus[page]:
             res[other_page] = random_prob
+
+    print(res)
+
+    prob_sum = 0
+    for v in res.values():
+        prob_sum += v
+    print("PROB SUM =",prob_sum)
 
     return res
 
