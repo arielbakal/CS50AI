@@ -12,7 +12,8 @@ def main():
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
 
-    transition_model(corpus, "1.html", DAMPING)
+    #transition_model(corpus, "1.html", DAMPING)
+    sample_pagerank(corpus, DAMPING, SAMPLES)
 
     # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     # print(f"PageRank Results from Sampling (n = {SAMPLES})")
@@ -60,7 +61,7 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    print("CORPUS: ",corpus)
+    # print("CORPUS: ",corpus)
     res = {}
 
     # Calculate the probability for choosing a random page
@@ -81,12 +82,12 @@ def transition_model(corpus, page, damping_factor):
         if other_page not in corpus[page]:
             res[other_page] = random_prob
 
-    print(res)
+    # print(res)
 
-    prob_sum = 0
-    for v in res.values():
-        prob_sum += v
-    print("PROB SUM =",prob_sum)
+    # prob_sum = 0
+    # for v in res.values():
+    #     prob_sum += v
+    # print("PROB SUM =",prob_sum)
 
     return res
 
@@ -100,8 +101,31 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # Initialize return var copying corpus keys with 0 as values
+    res = {page: 0 for page in corpus}
 
+    # First sampling
+    sample = random.choice(list(corpus.keys()))
+    res[sample] += 1
+
+    # Remaining n-1 samples
+    for _ in range(n-1):
+        model = transition_model(corpus, sample, damping_factor)
+        model_keys = list(model.keys())
+        model_weights = [model[i] for i in model]
+        sample = random.choices(model_keys, model_weights, k=1)[0]
+
+        res[sample] += 1
+
+    # Normalize the values
+    for item in res:
+        res[item] /= n
+
+    prob_sum = sum([res[i] for i in res])
+    print(res)
+    print("PROB SUM =", prob_sum)
+
+    return res
 
 def iterate_pagerank(corpus, damping_factor):
     """
