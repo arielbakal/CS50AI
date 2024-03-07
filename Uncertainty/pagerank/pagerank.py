@@ -67,7 +67,10 @@ def transition_model(corpus, page, damping_factor):
     res[page] = random_prob
 
     # Calculate the probability for choosing a linked page
-    linked_prob = (1 / len(corpus[page])) * damping_factor
+    if len(corpus[page]) == 0:
+        linked_prob = 0
+    else:
+        linked_prob = (1 / len(corpus[page])) * damping_factor
 
     # Assign the probability for each linked page
     for linked_page in corpus[page]:
