@@ -143,9 +143,9 @@ def iterate_pagerank(corpus, damping_factor):
 
     print(res)
     
-    differences = res.copy()
+    differences = {page: 1/len(corpus) for page in corpus}
 
-    while any(value >= 0.001 for value in differences.values()):
+    while max(differences.values()) >= 0.001:
         for p in res.keys():
             temp_diff = res[p]
 
@@ -154,15 +154,15 @@ def iterate_pagerank(corpus, damping_factor):
             suma = 0
 
             for i in pages_linked_to_p:
-
-                if len(corpus[i]) != 0:
-                    suma += res[i] / len(corpus[i])
+                if len(corpus[i]) == 0:
+                    suma += res[i] / len(corpus) 
                 else:
-                    suma += res[i] / len(corpus)
+                    suma += res[i] / len(corpus[i])
                 
             res[p] = ( (1-damping_factor) / len(corpus) ) + damping_factor * suma
 
             differences[p] = abs(temp_diff - res[p])
+        print("DIFFERENCE =", max(differences.values()))
 
     print(res)
 
@@ -174,14 +174,11 @@ def iterate_pagerank(corpus, damping_factor):
 
 def pages_linked_to(corpus, page):
 
-    res = []
+    linked_pages = corpus[page]
+    if not linked_pages:  # If the page has no links
+        return list(corpus.keys())  # Consider it linking to all pages
 
-    for p in corpus.keys():
-        if p != page:
-            if page in list(corpus[p]):
-                res.append(p)
-
-    return res
+    return [p for p in corpus if page in corpus[p]]
 
 if __name__ == "__main__":
     main()
