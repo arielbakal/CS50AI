@@ -12,10 +12,6 @@ def main():
         sys.exit("Usage: python pagerank.py corpus")
     corpus = crawl(sys.argv[1])
 
-    #transition_model(corpus, "1.html", DAMPING)
-    #sample_pagerank(corpus, DAMPING, SAMPLES)
-    iterate_pagerank(corpus, DAMPING)
-
     # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     # print(f"PageRank Results from Sampling (n = {SAMPLES})")
     # for page in sorted(ranks):
@@ -139,9 +135,9 @@ def iterate_pagerank(corpus, damping_factor):
     """
     res = {page: 1/len(corpus) for page in corpus}
 
-    print("corpus =", corpus)
+    # print("corpus =", corpus)
 
-    print(res)
+    # print(res)
     
     differences = {page: 1/len(corpus) for page in corpus}
 
@@ -162,14 +158,15 @@ def iterate_pagerank(corpus, damping_factor):
             res[p] = ( (1-damping_factor) / len(corpus) ) + damping_factor * suma
 
             differences[p] = abs(temp_diff - res[p])
-        print("DIFFERENCE =", max(differences.values()))
+        # print("DIFFERENCE =", max(differences.values()))
 
-    print(res)
+    # print(res)
 
-    prob_sum = sum([res[i] for i in res])
+    # prob_sum = sum([res[i] for i in res])
 
-    print("PROB SUM =", prob_sum)
+    # print("PROB SUM =", prob_sum)
 
+    return res
 
 
 def pages_linked_to(corpus, page):
