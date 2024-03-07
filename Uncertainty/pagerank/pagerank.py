@@ -57,7 +57,6 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    # print("CORPUS: ",corpus)
     res = {}
 
     # Calculate the probability for choosing a random page
@@ -81,15 +80,11 @@ def transition_model(corpus, page, damping_factor):
         if other_page not in corpus[page]:
             res[other_page] = random_prob
 
+    # prob_sum = sum([res[i] for i in res])
     # print(res)
-
-    # prob_sum = 0
-    # for v in res.values():
-    #     prob_sum += v
-    # print("PROB SUM =",prob_sum)
+    # print("prob sum =",prob_sum)
 
     return res
-
 
 def sample_pagerank(corpus, damping_factor, n):
     """
@@ -122,7 +117,7 @@ def sample_pagerank(corpus, damping_factor, n):
 
     # prob_sum = sum([res[i] for i in res])
     # print(res)
-    # print("PROB SUM =", prob_sum)
+    # print("prob sum =", prob_sum)
 
     return res
 
@@ -135,49 +130,48 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+    # Initialize pagerank values with 1/n
     res = {page: 1/len(corpus) for page in corpus}
-
-    # print("corpus =", corpus)
-
-    # print(res)
     
+    # Initialize differences of pagerank_n with pagerank_n+1
     differences = {page: 1/len(corpus) for page in corpus}
 
-    while max(differences.values()) >= 0.001:
+    # Iterate formula
+    while max(differences.values()) >= 0.001: 
         for p in res.keys():
-            temp_diff = res[p]
+            temp_diff = res[p] 
 
             pages_linked_to_p = pages_linked_to(corpus, p)
 
-            suma = 0
+            linked_pages_sum = 0
 
             for i in pages_linked_to_p:
                 if len(corpus[i]) == 0:
-                    suma += res[i] / len(corpus) 
+                    linked_pages_sum += res[i] / len(corpus) 
                 else:
-                    suma += res[i] / len(corpus[i])
+                    linked_pages_sum += res[i] / len(corpus[i])
                 
-            res[p] = ( (1-damping_factor) / len(corpus) ) + damping_factor * suma
+            res[p] = ( (1-damping_factor) / len(corpus) ) + (damping_factor * linked_pages_sum)
 
-            differences[p] = abs(temp_diff - res[p])
-        # print("DIFFERENCE =", max(differences.values()))
-
-    # print(res)
+            differences[p] = abs(temp_diff - res[p]) 
+        # print("diff =", max(differences.values()))
 
     # prob_sum = sum([res[i] for i in res])
-
-    # print("PROB SUM =", prob_sum)
+    # print(res)
+    # print("prob sum =", prob_sum)
 
     return res
 
-
 def pages_linked_to(corpus, page):
 
-    linked_pages = corpus[page]
-    if not linked_pages:  # If the page has no links
-        return list(corpus.keys())  # Consider it linking to all pages
+    res = corpus[page]
 
-    return [p for p in corpus if page in corpus[p]]
+    if not res:  
+        res = list(corpus.keys())  
+    else:
+        res = [p for p in corpus if page in corpus[p]]
+
+    return res
 
 if __name__ == "__main__":
     main()
