@@ -13,7 +13,8 @@ def main():
     corpus = crawl(sys.argv[1])
 
     #transition_model(corpus, "1.html", DAMPING)
-    sample_pagerank(corpus, DAMPING, SAMPLES)
+    #sample_pagerank(corpus, DAMPING, SAMPLES)
+    iterate_pagerank(corpus, DAMPING)
 
     # ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     # print(f"PageRank Results from Sampling (n = {SAMPLES})")
@@ -121,9 +122,9 @@ def sample_pagerank(corpus, damping_factor, n):
     for item in res:
         res[item] /= n
 
-    prob_sum = sum([res[i] for i in res])
-    print(res)
-    print("PROB SUM =", prob_sum)
+    # prob_sum = sum([res[i] for i in res])
+    # print(res)
+    # print("PROB SUM =", prob_sum)
 
     return res
 
@@ -136,8 +137,51 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    res = {page: 1/len(corpus) for page in corpus}
 
+    print("corpus =", corpus)
+
+    print(res)
+    
+    differences = res.copy()
+
+    while any(value >= 0.001 for value in differences.values()):
+        for p in res.keys():
+            temp_diff = res[p]
+
+            pages_linked_to_p = pages_linked_to(corpus, p)
+
+            suma = 0
+
+            for i in pages_linked_to_p:
+
+                if len(corpus[i]) != 0:
+                    suma += res[i] / len(corpus[i])
+                else:
+                    suma += res[i] / len(corpus)
+                
+            res[p] = ( (1-damping_factor) / len(corpus) ) + damping_factor * suma
+
+            differences[p] = abs(temp_diff - res[p])
+
+    print(res)
+
+    prob_sum = sum([res[i] for i in res])
+
+    print("PROB SUM =", prob_sum)
+
+
+
+def pages_linked_to(corpus, page):
+
+    res = []
+
+    for p in corpus.keys():
+        if p != page:
+            if page in list(corpus[p]):
+                res.append(p)
+
+    return res
 
 if __name__ == "__main__":
     main()
